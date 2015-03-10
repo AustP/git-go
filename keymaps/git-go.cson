@@ -1,0 +1,17 @@
+# Keybindings require three things to be fully defined: A selector that is
+# matched against the focused element, the keystroke and the command to
+# execute.
+#
+# Below is a basic keybinding which registers on all platforms by applying to
+# the root workspace element.
+
+# For more detailed documentation see
+# https://atom.io/docs/latest/advanced/keymaps
+'atom-workspace':
+  'ctrl-g ctrl-g': 'git-go:toggle'
+'.git-go':
+  'escape': 'git-go:hide'
+  'ctrl-c': 'git-go:select-console'
+  'ctrl-f': 'git-go:select-files'
+  'ctrl-b': 'git-go:select-branches'
+  'ctrl-t': 'git-go:select-tags'

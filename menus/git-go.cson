@@ -1,0 +1,14 @@
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'git-go'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'git-go:toggle'
+        }
+      ]
+    ]
+  }
+]

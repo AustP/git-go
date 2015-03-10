@@ -1,0 +1,160 @@
+@import "ui-variables";
+
+.git-go {
+  position: relative;
+  height: 300px; // should be divisble by 4
+  color: @text-color;
+  border-bottom: 2px solid @base-border-color;
+
+  &.focused {
+    background-color: @base-background-color;
+
+    .tabs {
+      > li > span:before {
+        position: absolute;
+        bottom: 5px;
+        content: ' ';
+        width: 7px;
+        height: 1px;
+        border-bottom: 1px solid @background-color-selected;
+      }
+
+      > li.files > span:before {
+        width: 5px;
+      }
+
+      > li.branches > span:before, > li.tags > span:before {
+        width: 6px;
+      }
+
+      > .active {
+        border-right-color: @background-color-selected;
+        background-color: @tab-background-color-active;
+        color: @text-color-selected;
+      }
+    }
+
+    .displays {
+      background-color: @tab-background-color-active;
+      color: @text-color-selected;
+
+      h3 {
+        border-bottom-color: @tab-border-color;
+      }
+    }
+  }
+
+  > * {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    vertical-align: top;
+  }
+
+  .tabs {
+    line-height: @component-line-height;
+    list-style: none;
+    height: 100%;
+    width: 75px;
+
+    > li {
+      position: relative;
+      padding: 0 15px;
+      height: 25%;
+      box-sizing: border-box;
+      border-right: 2px solid @tab-border-color;
+
+      &:not(:last-of-type) {
+        border-bottom: 2px solid @base-border-color;
+      }
+
+      > span {
+        position: absolute;
+        top: 50%;
+        margin-top: -1 * @component-line-height/2;
+      }
+
+      &.active {
+        background-color: @app-background-color;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: @background-color-highlight;
+        color: @text-color-highlight;
+      }
+    }
+  }
+
+  .displays {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 75px;
+
+    > div {
+      overflow-x: scroll;
+      overflow-y: hidden;
+      height: 100%;
+
+      display: none;
+      &.active {
+        display: block;
+      }
+
+      > div {
+        width: 300px;
+        display: inline-block;
+        height: 100%;
+        padding: 12px;
+        overflow-y: scroll;
+        border-right: 1px solid @base-border-color;
+
+        > h2 {
+          margin: 0;
+          padding-bottom: 4px;
+        }
+
+        > h3 {
+          margin: 10px 0 -2px;
+          padding-bottom: 2px;
+          font-size: 1.3em;
+          border-bottom: 1px solid @base-border-color;
+        }
+
+        > span:not(.description):not(:nth-child(2)) {
+          font-weight: bold;
+        }
+
+        > span.description {
+          display: block;
+          padding-left: 10px;
+          margin-bottom: 5px;
+        }
+      }
+    }
+  }
+
+  #git-go-output {
+    position: absolute;
+    width: 100%;
+    height: initial;
+    padding: 6px;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: pre;
+    top: 0;
+    bottom: @component-line-height;
+  }
+
+  atom-text-editor {
+    position: absolute;
+    bottom: -1px;
+    width: 100%;
+    height: @component-line-height;
+    font-family: monospace;
+    background-color: @base-background-color !important;
+    color: inherit !important;
+  }
+}
