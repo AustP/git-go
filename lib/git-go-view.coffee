@@ -15,10 +15,14 @@ class GitGoView extends View
     @on 'focus', => @focus()
     @on 'focusout', (e) => @unfocus(e)
 
+    $(window).on 'focus', (e) =>
+      return if @hasFocus() or !@console.child? or !@console.env.SUDO_ASKPASS
+      @focus()
+
     @output = $ @element.querySelector '#git-go-output'
     @input = @tabsDisplayView.gitGoInput
 
-    @input.on 'focus', => @focus(true)
+    @input.on 'focus', => @focus()
     @input.on 'focusout', (e) => @unfocus(e)
 
     @console = Console.initialize @output, @input
@@ -54,12 +58,14 @@ class GitGoView extends View
     @unfocus()
 
   hasFocus: ->
-    @is(':focus') or document.activeElement is @element or document.activeElement.matches('.git-go atom-text-editor')
+    @hasClass('focused') or @is(':focus') or document.activeElement is @element or document.activeElement.matches('.git-go atom-text-editor')
 
-  focus: (already_focused) ->
-    @addClass 'focused'
-    return @element.focus() unless @tabsListView.current_tab == 'console'
-    @input.focus() unless already_focused
+  focus: ->
+    setTimeout =>
+      @addClass 'focused'
+      return @element.focus() unless @tabsListView.current_tab == 'console'
+      @input.focus() unless @input.element.classList.contains 'is-focused'
+    , 0
 
   unfocus: (e) ->
     return if e and e.relatedTarget and e.relatedTarget.matches '.git-go, .git-go *'
