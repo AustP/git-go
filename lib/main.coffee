@@ -14,6 +14,12 @@ module.exports =
       type: 'boolean'
       default: true
       order: 2
+    askpassPath:
+      title: 'Askpass Path'
+      description: 'To enable sudo commands, add an askpass program path here. i.e. /usr/bin/ssh-askpass'
+      type: 'string'
+      default: ''
+      order: 3
 
   gitGoView: null
   subscriptions: null
@@ -35,6 +41,9 @@ module.exports =
     @subscriptions.add atom.config.onDidChange 'git-go.height', =>
       @getView().setHeight atom.config.get 'git-go.height'
 
+    @subscriptions.add atom.config.onDidChange 'git-go.askpassPath', =>
+      @getView().setAskpassPath atom.config.get 'git-go.askpassPath'
+
   getView: ->
     unless @gitGoView?
       GitGoView = require './git-go-view'
@@ -44,6 +53,7 @@ module.exports =
         item: @gitGoView
 
       @gitGoView.setHeight atom.config.get 'git-go.height'
+      @gitGoView.setAskpassPath atom.config.get 'git-go.askpassPath'
 
     @gitGoView
 

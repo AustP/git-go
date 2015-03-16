@@ -1,6 +1,5 @@
 {exec, spawn} = require 'child_process'
 path = require 'path'
-tty = require 'tty'
 
 module.exports =
   child: null
@@ -29,7 +28,9 @@ module.exports =
     @input.setText if @child? then '' else "#{@cwd}$ "
 
   getCommand: ->
-    string = @input.getText().substr(@cwd.length + 2)
+    input_text = @input.getText()
+    string = input_text.substr(@cwd.length + 2)
+    string = input_text if string is '' and input_text.indexOf(@cwd) is -1
     raw_args = string.split(' ')
 
     # handle quotes
@@ -109,7 +110,7 @@ module.exports =
     @clearInputText()
 
   exec: (command, cb = ->) ->
-    exec command, {cwd: @cwd}, (error, stdout, stderr) =>
+    exec command, {cwd: @cwd, env: @env}, (error, stdout, stderr) =>
       if error?
         message = error.message.split("\n").splice(1).join("\n")
         @addOutput message
@@ -136,6 +137,9 @@ module.exports =
     """
     @output[0].innerHTML = html
 
+  setAskpassPath: (path) ->
+    @env.SUDO_ASKPASS = path if path
+
   initialize: (@output, @input) ->
     if atom.config.get 'git-go.displayIntroduction'
       @displayIntroduction()
@@ -143,11 +147,14 @@ module.exports =
       @output[0].innerHTML = "git-go terminal - <a href='http://github.com/austp/git-go'>http://github.com/austp/git-go</a>"
 
     @input.on 'keydown', (e) => @inputKeydownHandler(e)
-    @input.on 'keypress', (e) => @inputKeypressHandler(e)
     @input.on 'keyup', (e) => @inputKeyupHandler(e)
 
     @cwd = atom.project.getPath()
     @clearInputText()
+
+    @env = process.env
+
+    @
 
   inputKeydownHandler: (e) ->
     switch
@@ -158,14 +165,6 @@ module.exports =
       )()
       when e.which is 36 then @cursor_column = @input.model.getCursorBufferPosition().column
       when e.which is 67 and e.ctrlKey then @ctrlCHandler()
-      else null
-
-  inputKeypressHandler: (e) ->
-    switch
-      when @child? then (->
-        e.stopPropagation()
-        e.preventDefault()
-      )()
       else null
 
   inputKeyupHandler: (e) ->
@@ -181,7 +180,7 @@ module.exports =
       )()
       when e.which is 38 then @upHandler()
       when e.which is 40 then @downHandler()
-      when @input.getText().indexOf("#{@cwd}$ ") isnt 0 then @clearInputText()
+      when @input.getText().indexOf("#{@cwd}$ ") isnt 0 and !@child? then @clearInputText()
       else null
 
   escapeArgs: (command, substr) ->
@@ -207,7 +206,7 @@ module.exports =
 
     all_flag = if substr and substr[0] is '.' then '-a' else '-A'
 
-    exec "ls #{all_flag} --file-type \"#{path.resolve(@cwd, arg)}\"", (error, stdout, stderr) =>
+    exec "ls #{all_flag} --file-type \"#{path.resolve(@cwd, arg)}\"", {env: @env}, (error, stdout, stderr) =>
       outcomes = stdout.split "\n"
       return unless outcomes.length
 
@@ -270,28 +269,39 @@ module.exports =
   enterHandler: ->
     command = @getCommand()
     command.string = command.string.trim()
-    @addOutput "#{@cwd}$ #{command.string}"
-    return @clearInputText() unless command.string
 
-    @addHistory command.string
+    if @child?
+      @addOutput command.string
+      @child.stdin.write "#{command.string}\n"
+      @clearInputText()
+    else
+      @addOutput "#{@cwd}$ #{command.string}"
+      return @clearInputText() unless command.string
 
-    return @handleClear() if command.file is 'clear'
-    return @handleCD(command) if command.file is 'cd'
+      @addHistory command.string unless @child?
 
-    try
-      @child = spawn command.file, command.args, {cwd: @cwd}
+      return @handleClear() if command.file is 'clear'
+      return @handleCD(command) if command.file is 'cd'
 
-      @child.stdout.on 'data', (data) =>
-        @addOutput data.toString()
-      @child.stderr.on 'data', (data) =>
-        @addOutput data.toString()
-      @child.on 'close', =>
-        @closeChild()
-      @child.on 'error', =>
-        # we have to exec to get the error
+      try
+        @child = spawn command.file, command.args, {cwd: @cwd, env: @env}
+
+        @child.stdin.setEncoding 'utf-8'
+
+        @child.stdout.on 'data', (data) =>
+          @addOutput data.toString()
+
+        @child.stderr.on 'data', (data) =>
+          @addOutput data.toString()
+
+        @child.on 'close', =>
+          @closeChild()
+
+        @child.on 'error', =>
+          # if this command isn't continual, pass it to exec
+          @exec command.string
+      catch e
         @exec command.string
-    catch e
-      @exec command.string
 
     @clearInputText()
 

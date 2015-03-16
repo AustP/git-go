@@ -21,7 +21,7 @@ class GitGoView extends View
     @input.on 'focus', => @focus(true)
     @input.on 'focusout', (e) => @unfocus(e)
 
-    Console.initialize @output, @input
+    @console = Console.initialize @output, @input
 
   selectTab: (tab) ->
     @tabsListView.selectTab(tab)
@@ -35,6 +35,9 @@ class GitGoView extends View
 
   setHeight: (height) ->
     @element.style.height = "#{height}px"
+
+  setAskpassPath: (path) ->
+    @console.setAskpassPath path
 
   show: ->
     if !@tabsListView.current_tab?
