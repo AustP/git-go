@@ -296,6 +296,7 @@ module.exports =
           @addOutput data.toString()
 
         @child.on 'close', =>
+          atom.project.getRepo()?.refreshStatus() if command.file is 'git'
           @closeChild()
 
         @child.on 'error', =>
