@@ -9,6 +9,10 @@
   &.focused {
     background-color: @base-background-color;
 
+    atom-text-editor {
+      background-color: @base-background-color !important;
+    }
+
     .tabs {
       > li > span:before {
         position: absolute;
@@ -16,7 +20,7 @@
         content: ' ';
         width: 7px;
         height: 1px;
-        border-bottom: 1px solid @background-color-selected;
+        border-bottom: 1px solid @text-color-info;
       }
 
       > li.files > span:before {
@@ -63,6 +67,7 @@
       height: 25%;
       box-sizing: border-box;
       border-right: 2px solid @tab-border-color;
+      background-color: @app-background-color;
 
       &:not(:last-of-type) {
         border-bottom: 2px solid @base-border-color;
@@ -154,7 +159,9 @@
     width: 100%;
     height: @component-line-height;
     font-family: monospace;
-    background-color: @base-background-color !important;
+    background-color: @app-background-color !important;
     color: inherit !important;
+    border-color: @app-background-color !important;
+    box-shadow: none !important;
   }
 }
