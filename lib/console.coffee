@@ -97,6 +97,9 @@ module.exports =
 
   handleCD: (command) ->
     return @clearInputText() unless command.args[0]
+
+    command.args[0] = @env.HOME if command.args[0] is '~'
+
     cwd = path.resolve @cwd, command.args[0]
     @exec "cd #{cwd}", (error, stdout, stderr) =>
       if !error? and !stderr
