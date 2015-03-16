@@ -137,6 +137,9 @@ module.exports =
     """
     @output[0].innerHTML = html
 
+  setForceKillShortcut: (shortcut) ->
+    @force_kill_shortcut = shortcut
+
   setAskpassPath: (path) ->
     @env.SUDO_ASKPASS = path if path
 
@@ -150,21 +153,19 @@ module.exports =
     @input.on 'keyup', (e) => @inputKeyupHandler(e)
 
     @cwd = atom.project.getPath()
-    @clearInputText()
-
     @env = process.env
+    @clearInputText()
 
     @
 
   inputKeydownHandler: (e) ->
     switch
       when e.which is 9 then e.preventDefault()
-      when e.which is 27 then (=>
-        e.stopPropagation()
-        @clearInputText()
-      )()
+      when e.which is 27 and @force_kill_shortcut is 'Escape' then @forceKill()
       when e.which is 36 then @cursor_column = @input.model.getCursorBufferPosition().column
       when e.which is 67 and e.ctrlKey then @ctrlCHandler()
+      when e.which is 88 and e.ctrlKey and @force_kill_shortcut is 'Ctrl-X' then @forceKill()
+      when e.which is 90 and e.ctrlKey and @force_kill_shortcut is 'Ctrl-Z' then @forceKill()
       else null
 
   inputKeyupHandler: (e) ->
@@ -319,3 +320,8 @@ module.exports =
     return unless @child
     @addOutput '^C'
     @child.kill('SIGINT')
+
+  forceKill: ->
+    return unless @child
+    @addOutput 'SIGKILL sent to process'
+    @child.kill('SIGKILL')

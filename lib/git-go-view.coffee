@@ -36,6 +36,9 @@ class GitGoView extends View
   setHeight: (height) ->
     @element.style.height = "#{height}px"
 
+  setForceKillShortcut: (shortcut) ->
+    @console.setForceKillShortcut shortcut
+
   setAskpassPath: (path) ->
     @console.setAskpassPath path
 

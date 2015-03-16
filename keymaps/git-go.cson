@@ -10,7 +10,6 @@
 'atom-workspace':
   'ctrl-g ctrl-g': 'git-go:toggle'
 '.git-go':
-  'escape': 'git-go:hide'
   'ctrl-c': 'git-go:select-console'
   'ctrl-f': 'git-go:select-files'
   'ctrl-b': 'git-go:select-branches'
