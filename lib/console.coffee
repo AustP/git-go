@@ -155,7 +155,7 @@ module.exports =
     @input.on 'keydown', (e) => @inputKeydownHandler(e)
     @input.on 'keyup', (e) => @inputKeyupHandler(e)
 
-    @cwd = atom.project.getPath()
+    @cwd = atom.project.getPaths()[0]
     @env = process.env
     @clearInputText()
 
@@ -299,7 +299,7 @@ module.exports =
           @addOutput data.toString()
 
         @child.on 'close', =>
-          atom.project.getRepo()?.refreshStatus() if command.file is 'git'
+          atom.project.getRepositories()[0]?.refreshStatus() if command.file is 'git'
           @closeChild()
 
         @child.on 'error', =>
