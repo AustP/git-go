@@ -302,6 +302,9 @@ module.exports =
           atom.project.getRepositories()[0]?.refreshStatus() if command.file is 'git'
           @closeChild()
 
+        @child.on 'exit', =>
+          @closeChild()
+
         @child.on 'error', =>
           # if this command isn't continual, pass it to exec
           @exec command.string
