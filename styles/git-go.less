@@ -14,20 +14,15 @@
     }
 
     .tabs {
-      > li > span:before {
-        position: absolute;
-        bottom: 5px;
-        content: ' ';
-        width: 7px;
-        height: 1px;
+      > li > span:after {
         border-bottom: 1px solid @text-color-info;
       }
 
-      > li.files > span:before {
+      > li.files > span:after {
         width: 5px;
       }
 
-      > li.branches > span:before, > li.tags > span:before {
+      > li.branches > span:after, > li.tags > span:after {
         width: 6px;
       }
 
@@ -56,12 +51,12 @@
   }
 
   .tabs {
-    line-height: @component-line-height;
-    list-style: none;
+    border-right: 1px solid @base-border-color;
     height: 100%;
-    width: 75px;
 
     > li {
+      align-items: center;
+      display: flex;
       position: relative;
       padding: 0 15px;
       height: 25%;
@@ -73,12 +68,6 @@
         border-bottom: 2px solid @base-border-color;
       }
 
-      > span {
-        position: absolute;
-        top: 50%;
-        margin-top: -1 * @component-line-height/2;
-      }
-
       &.active {
         background-color: @app-background-color;
       }
@@ -88,15 +77,19 @@
         background-color: @background-color-highlight;
         color: @text-color-highlight;
       }
+      
+      > span:after {
+        border-bottom: 1px solid transparent;
+        content: ' ';
+        display: block;
+        width: 7px;
+      }
     }
   }
 
   .displays {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 75px;
+    height: 100%;
+    width: 100%;
 
     > div {
       overflow-x: scroll;
@@ -104,8 +97,15 @@
       height: 100%;
 
       display: none;
+      &.console {
+        flex-direction: column;
+      }
+      
       &.active {
         display: block;
+        &.console {
+          display: flex;
+        }
       }
 
       > div {
@@ -142,28 +142,19 @@
   }
 
   #git-go-output {
-    position: absolute;
-    width: 100%;
-    height: initial;
-    padding: 6px;
+    flex: 1;
     font-family: monospace;
-    font-size: 14px;
+    padding: 6px;
     white-space: pre;
-    top: 0;
-    bottom: @component-line-height;
+    width: 100%;
   }
 
   atom-text-editor {
-    position: absolute;
-    bottom: -1px;
-    width: 100%;
-    height: @component-line-height;
-    font-family: monospace;
     background-color: @app-background-color !important;
-    color: inherit !important;
-    border-color: @app-background-color !important;
+    border: none !important;
     box-shadow: none !important;
-    border-radius: 0px !important;
-    border-left: 0px solid #000 !important;
+    font-family: monospace;
+    font-size: inherit !important;
+    width: 100%;
   }
 }

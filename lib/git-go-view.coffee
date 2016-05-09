@@ -50,7 +50,7 @@ class GitGoView extends View
     if !@tabsListView.current_tab?
       @selectTab 'console'
 
-    @element.style.display = 'block'
+    @element.style.display = 'flex'
     @focus()
 
   hide: ->
