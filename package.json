@@ -1,7 +1,7 @@
 {
   "name": "git-go",
   "main": "./lib/main",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A drop down terminal and commonly used git commands available from the \"get-go\".",
   "repository": "https://github.com/austp/git-go",
   "license": "MIT",
